@@ -1,6 +1,7 @@
-import {buildSchema} from 'graphql'
+import {makeExecutableSchema} from 'graphql-tools'
+import {resolvers} from '../resolvers'
 
-const schema = buildSchema(`
+const typeDefs =`
     type gameReviewer{
         id:String
         review:String
@@ -25,6 +26,8 @@ const schema = buildSchema(`
         owner:User
        owners:[User]
     }
-`);
+`;
 
-module.exports =  schema
+const schema = makeExecutableSchema({typeDefs, resolvers})
+
+module.exports =  {schema}
