@@ -1,17 +1,12 @@
-const users=[]
-let user={}
+import Game from '../models/game'
+import User from '../models/user'
+
  
 export const resolvers = {
 
     Query:{
-        game:()=> {
-            return {
-                id:"6555",
-                review:"Fantastic Game",
-                rating:6,
-                price:1200,
-                reviewer:"James Jones"
-            }
+        getGame: async(_, {id})=> {
+            return await Game.findOne({_id:id})
         },
         owner:()=>{
             return {
@@ -20,18 +15,26 @@ export const resolvers = {
     
             }
         },
-        owners:()=>{
-            return users
+        getOwners:async ()=>{
+            return await User.find()
     
         },
 
     },
 
     Mutation: {
-        createUser:({input})=>{
-            user = input
-            users.push(user)
-            return user
+        createUser:async (_,{input})=>{
+            const user = await User.create(input)
+            return await User.findOne({_id:user.id}).populate("Game")
+        },
+        createGame:(_,{input})=>{
+           return Promise.resolve(Game.create(input))
+        },
+        updateUser:async (_, {input}) =>{
+            return await User.findOneAndUpdate({_id:input.id}, input,{ useFindAndModify: false })
+        },
+        deleteUser: async(_, {id}) => {
+            return await User.findByIdAndDelete({_id:id}, { useFindAndModify: false })
         }
 
     }
